@@ -1,0 +1,5 @@
+app:
+  deployment:
+    kafkatest:
+      port: 2020
+      name: kafka-test

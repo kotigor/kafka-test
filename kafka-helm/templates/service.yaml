@@ -1,0 +1,11 @@
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: {{ .Values.app.deployment.kafkatest.name }}
+spec: 
+  ports: 
+    - port: {{ .Values.app.deployment.kafkatest.port }}
+      targetPort: 8080
+  selector: 
+    app: {{ .Values.app.deployment.kafkatest.name }}
+  type: LoadBalancer

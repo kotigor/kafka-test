@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.deployment.kafkatest.name }}
+spec:
+  replicas: 1
+  selector:
+      matchLabels:
+        app: {{ .Values.app.deployment.kafkatest.name }}
+  template:
+    metadata:
+      name: {{ .Values.app.deployment.kafkatest.name }}
+      labels:
+        app: {{ .Values.app.deployment.kafkatest.name }}
+    spec:
+      containers:
+        - name: {{ .Values.app.deployment.kafkatest.name }}
+          image: konstantinovi/kafka-test
+          ports:
+            - containerPort: 8080
+          resources: 
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 500m
+              memory: 500Mi
+          env:
+            - name: KAFKA_ADDRESS
+              value: http://kafka:9092
