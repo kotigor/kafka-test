@@ -2,6 +2,7 @@ package com.example.kafka.service;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
@@ -19,6 +20,7 @@ public class ChatService implements ChatServiceInterface{
     private final Consumer<String, String> consumer;
     private final KafkaAdmin kafkaAdmin;
     private String currentProducer;
+    private int currentProducerPartition;
 
     @Autowired
     public ChatService(KafkaTemplate<String, String> kafkaTemplate,
@@ -30,24 +32,23 @@ public class ChatService implements ChatServiceInterface{
     }
 
     @Override
-    public void connect(String producerTopic, String consumerTopic){
-        currentProducer = producerTopic;
+    public void connect(String topic, int producerPartition, int consumerPartition){
+        currentProducer = topic;
+        currentProducerPartition = producerPartition;
         consumer.unsubscribe();
-        consumer.subscribe(Collections.singleton(consumerTopic));
+        consumer.assign(Collections.singleton(new TopicPartition(topic, consumerPartition)));
     }
 
     @Override
-    public List<String> createChat(String chatName) {
+    public List<List<String>> createChat(String chatName) {
         String topicName1 = chatName + "-1";
-        String topicName2 = chatName + "-2";
-        kafkaAdmin.createOrModifyTopics(new NewTopic(topicName1, 1, (short) 1),
-                new NewTopic(topicName2, 1, (short) 1));
-        return List.of(topicName1, topicName2);
+        kafkaAdmin.createOrModifyTopics(new NewTopic(topicName1, 2, (short) 1));
+        return List.of(List.of(topicName1, "0"), List.of(topicName1, "1"));
     }
 
     @Override
     public void sendMsg(String msg) {
-        kafkaTemplate.send(currentProducer, msg);
+        kafkaTemplate.send(currentProducer, currentProducerPartition,"", msg);
     }
 
     @Override

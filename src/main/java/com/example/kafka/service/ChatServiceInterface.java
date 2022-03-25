@@ -6,8 +6,8 @@ import java.util.List;
 
 @Service
 public interface ChatServiceInterface {
-    List<String> createChat(String chatName);
+    List<List<String>> createChat(String chatName) ;
     void sendMsg(String msg);
     List<String> readLastMsg();
-    void connect(String producerTopic, String consumerTopic);
+    void connect(String topic, int producerPartition, int consumerPartition);
 }

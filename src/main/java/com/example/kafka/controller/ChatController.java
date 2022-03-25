@@ -20,13 +20,13 @@ public class ChatController {
     }
 
     @PostMapping(value = "/")
-    public List<String> createTopics(@RequestParam String chatName){
+    public List<List<String>> createTopics(@RequestParam String chatName){
         return chatService.createChat(chatName);
     }
 
     @PostMapping(value = "/connect")
-    public String connect(@RequestParam String consumer, @RequestParam String producer){
-        chatService.connect(producer, consumer);
+    public String connect(@RequestParam String topic, @RequestParam int producerPartition, @RequestParam int consumerPartition){
+        chatService.connect(topic, producerPartition, consumerPartition);
         return "success";
     }
 
